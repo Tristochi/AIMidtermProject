@@ -72,8 +72,7 @@ n = 2000
 total_rounds = 0
 
 players = [(i, np.random.rand()) for i in range(125)]
-print('Before slice: ')
-print(len(players))
+
 sim = RaceSim()
 top_three = sim.simulate_races(players)
 rounds = sim.rounds
