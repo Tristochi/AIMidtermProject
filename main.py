@@ -10,15 +10,7 @@ class RaceSim:
         if len(players) % 25 != 0:
             remainder = len(players) % 25
             the_end = players[-remainder:]
-            print('Len of the end:')
-            print(len(the_end))
             players = players[:-remainder]
-            print('After slice: ')
-            print(len(players))
-        
-        print('Player len')
-        print(len(players))
-
 
         matrices =[]
         tmp = []
@@ -50,9 +42,11 @@ class RaceSim:
         if len(players) <= 5:
             #Base case. Return fastest three runners
             players.sort(key=lambda racer: racer[1], reverse=False)
+            self.rounds+=1
             return [players[0], players[1], players[2]]
         
         #Break players down into a list of 5x5 matrices
+
         the_matrices = self.create_matrices(players)
         winners = []
 
@@ -63,20 +57,42 @@ class RaceSim:
                 self.rounds += 1
             
             #Gather all the winners into new matrices
+            #Check if necessary for 7th test
+
+            tmp = [matrix[0][1], matrix[0][1], matrix[0][2]]
+
             for i in range(len(matrix)):
+                if len(the_matrices) == 1:
+                    for j in range(3):
+                        if i < 2:
+                            if matrix[i][j] < tmp[0]:
+                                tmp[0] = matrix[i][j]
+                            elif matrix[i][j] < tmp[1]:
+                                tmp[1] = matrix[i][j]
+                            elif matrix[i][j] < tmp[2]:
+                                tmp[2] = matrix[i][j]
+                        else:
+                            tmp.append(matrix[i][0])
+                    tmp.sort(key=lambda racer:racer[1], reverse=False)
+                    self.rounds+=1
+                    return self.simulate_races(tmp)
+
                 winners.append(matrix[i][0])
-            
+ 
         return self.simulate_races(winners)
 
 n = 2000
 total_rounds = 0
 
-players = [(i, np.random.rand()) for i in range(125)]
+for i in range(n):
+    players = [(i, np.random.rand()) for i in range(999)]
+    sim = RaceSim()
+    top_three = sim.simulate_races(players)
+    rounds = sim.rounds
+    total_rounds += rounds
 
-sim = RaceSim()
-top_three = sim.simulate_races(players)
-rounds = sim.rounds
-
-print('Total Rounds: ' + str(rounds))
+average_rounds = total_rounds/n 
+print('Average Rounds: ' + str(average_rounds))
+print('Top three racers: ')
 print(top_three)
 
